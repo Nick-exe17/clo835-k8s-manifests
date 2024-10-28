@@ -1,0 +1,27 @@
+# webapp-replicaset.yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: webapp-replicaset
+  namespace: webapp-namespace
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: 664861096338.dkr.ecr.us-east-1.amazonaws.com/my-webapp:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: APP_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: webapp-secret
+              key: app-secret-key

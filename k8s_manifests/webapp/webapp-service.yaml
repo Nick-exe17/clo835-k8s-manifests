@@ -1,0 +1,14 @@
+# webapp-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+  namespace: webapp-namespace
+spec:
+  type: NodePort
+  selector:
+    app: webapp
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30000  # Exposing the service on NodePort 30000
