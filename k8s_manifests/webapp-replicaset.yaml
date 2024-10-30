@@ -1,11 +1,10 @@
-# webapp-replicaset.yaml
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
   name: webapp-replicaset
-  namespace: webapp-namespace
+  namespace: webapp-namespace  # Use the same namespace as the deployment
 spec:
-  replicas: 3
+  replicas: 1  # Number of desired replicas
   selector:
     matchLabels:
       app: webapp
@@ -14,14 +13,28 @@ spec:
       labels:
         app: webapp
     spec:
+      imagePullSecrets:
+        - name: ecr-registery-secret  # Reference the secret for ECR access
       containers:
-      - name: webapp
-        image: 664861096338.dkr.ecr.us-east-1.amazonaws.com/my-webapp:latest
-        ports:
-        - containerPort: 80
-        env:
-        - name: APP_SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: webapp-secret
-              key: app-secret-key
+        - name: webapp
+          image: 66480196338.dkr.ecr.us-east-1.amazonaws.com/my-webapp:latest  # ECR image URL
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DBHOST
+              value: "mysql-service.mysql-namespace.svc.cluster.local"
+            - name: DBUSER
+              value: "root"
+            - name: DBPWD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-root-password
+            - name: DATABASE
+              value: "employees"
+            - name: APP_COLOR
+              value: "blue"
+            - name: DBPORT
+              value: "3306"
+
+

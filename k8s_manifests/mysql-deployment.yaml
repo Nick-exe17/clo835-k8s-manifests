@@ -2,9 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql-deployment
-  namespace: mysql-namespace
+  namespace: mysql-namespace  # Use the same namespace as specified for MySQL
 spec:
-  replicas: 1
+  replicas: 1  # Number of MySQL replicas
   selector:
     matchLabels:
       app: mysql
@@ -13,14 +13,18 @@ spec:
       labels:
         app: mysql
     spec:
+      imagePullSecrets:
+        - name: ecr-registry-secret  # Reference the ECR access secret
       containers:
-      - name: mysql
-        image: 664861096338.dkr.ecr.us-east-1.amazonaws.com/my-sql:latest
-        ports:
-        - containerPort: 3306
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-secret
-              key: mysql-root-password
+        - name: mysql-container  # Updated container name for clarity
+          image: 664861096338.dkr.ecr.us-east-1.amazonaws.com/my-sql:latest  # Updated ECR image URL
+          ports:
+            - containerPort: 3306  # MySQL default port
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret  # Secret storing MySQL root password
+                  key: mysql-root-password
+            - name: MYSQL_DATABASE
+              value: "employees"  # Ensure database name aligns with the app configuration

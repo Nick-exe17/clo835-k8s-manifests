@@ -1,19 +1,31 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: webapp
-  namespace: webapp-namespace
+  name: webapp-pod
+  namespace: webapp-namespace  # Specify the namespace here
   labels:
     app: webapp
 spec:
+  imagePullSecrets:
+    - name: ecr-registery-secret  # Reference the secret for ECR access
   containers:
-  - name: webapp
-    image: 664861096338.dkr.ecr.us-east-1.amazonaws.com/my-webapp:latest
-    ports:
-    - containerPort: 80
-    env:
-    - name: APP_SECRET_KEY
-      valueFrom:
-        secretKeyRef:
-          name: webapp-secret
-          key: app-secret-key
+    - name: webapp
+      image: 66480196338.dkr.ecr.us-east-1.amazonaws.com/my-webapp:latest  # ECR image URL
+      ports:
+        - containerPort: 8080
+      env:
+        - name: DBHOST
+          value: "mysql-service.mysql-namespace.svc.cluster.local"  # Fully qualified service name for MySQL
+        - name: DBUSER
+          value: "root"
+        - name: DBPWD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret  # Name of the secret
+              key: mysql-root-password  # Key in the secret
+        - name: DATABASE
+          value: "employees"
+        - name: APP_COLOR
+          value: "blue"  # Default color
+        - name: DBPORT
+          value: "3306"  #

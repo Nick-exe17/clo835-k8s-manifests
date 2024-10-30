@@ -6,6 +6,8 @@ metadata:
   labels:
     app: mysql
 spec:
+  imagePullSecrets:
+    - name: ecr-registry-secret
   containers:
   - name: mysql
     image: 664861096338.dkr.ecr.us-east-1.amazonaws.com/my-sql:latest
