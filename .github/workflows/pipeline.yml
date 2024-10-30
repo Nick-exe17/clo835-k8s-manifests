@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  if_merged:
+  build_and_push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -24,18 +24,20 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: my-webapp
+          IMAGE_TAG: latest
         run: |
-          # Build the web app image
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-          # Push the web app image with the latest tag
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          # Explicitly name and tag the web app image
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          # Push the web app image to ECR with the specified name and tag
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Build and push MySQL image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: my-sql
+          IMAGE_TAG: latest
         run: |
-          # Build the MySQL image
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest -f Dockerfile_mysql .
-          # Push the MySQL image with the latest tag
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          # Explicitly name and tag the MySQL image
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile_mysql .
+          # Push the MySQL image to ECR with the specified name and tag
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
